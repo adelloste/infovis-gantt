@@ -31,9 +31,10 @@ var svg = d3.select('body')
 
 /**
  * update xScale domain
+ * @param {*} data 
  */
-function updateXScaleDomain() {
-    xScale.domain([new Date('2021-01-01'), new Date('2021-12-31')]);
+function updateXScaleDomain(data) {
+    xScale.domain([d3.min(data, d => new Date(d.initDate)), d3.max(data, d => new Date(d.endDate))]);
 }
 
 /**
@@ -88,13 +89,43 @@ function drawVerticalLines() {
         .attr('y2', height - margin.bottom);
 }
 
+function drawBars(data) {
+    // calculate bar height
+    var barHeight = yScale.bandwidth() / 2;
+    // create rect
+    svg.append('g')
+        .selectAll('rect')
+        .data(data)
+        .join(
+            enter => enter.append('rect')
+                .attr('fill', d => d.color)
+                .attr('width', 0)
+                .attr('height', barHeight)
+                .attr('x', function (d) {
+                    const cooX = xScale(new Date(d.initDate))
+                    return cooX + (1 * xOffset);
+                  })
+                .attr('y', d => (yScale(d.name) + barHeight / 2))
+                .call(
+                    enter => enter
+                        .transition()
+                        .delay((d, i) => i * 60)
+                        .attr('width', function (d) {
+                            const init = xScale(new Date(d.initDate));
+                            const end = xScale(new Date(d.endDate));
+                            return end - init;
+                        })
+                )
+        );
+}
+
 /**
  * draw 
  * @param {*} data 
  */
 function draw(data) {
     // update domain
-    updateXScaleDomain();
+    updateXScaleDomain(data);
     updateYScaleDomain(data);
     // draw x-axis
     drawXAxis();
@@ -102,6 +133,8 @@ function draw(data) {
     drawYAxis();
     // draw vertical lines
     drawVerticalLines();
+    // draw bars
+    drawBars(data);
 }
 
 // get data
