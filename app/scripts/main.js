@@ -44,6 +44,20 @@ function updateYScaleDomain(data) {
 }
 
 /**
+ * draw y-axis
+ */
+function drawYAxis() {
+    // add scales to axis
+    var y_axis = d3.axisLeft().scale(yScale);
+    // append group and insert y-axis
+    svg.append('g')
+        .transition()
+        .duration(500)
+        .attr('transform', 'translate(' + [margin.left, 0] + ')')
+        .call(y_axis);
+}
+
+/**
  * draw 
  * @param {*} data 
  */
@@ -51,6 +65,8 @@ function draw(data) {
     // update domain
     updateXScaleDomain();
     updateYScaleDomain(data);
+    // draw y-axis
+    drawYAxis();
 }
 
 // get data
