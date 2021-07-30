@@ -9,9 +9,10 @@
 }
 
 // init
-var margin = { top: 40, right: 30, bottom: 10, left: 40 },
-    width  = 900,
-    height = 400;
+var margin  = { top: 40, right: 30, bottom: 10, left: 40 },
+    width   = 900,
+    height  = 400,
+    xOffset = 10;
 
 // scale for x-axis
 var xScale = d3.scaleUtc().range([margin.right, width - margin.left]);
@@ -50,7 +51,7 @@ function drawXAxis() {
     svg.append('g')
         .transition()
         .duration(500)
-        .attr('transform', 'translate(' + [10, margin.top] + ')')
+        .attr('transform', 'translate(' + [xOffset, margin.top] + ')')
         .call(x_axis);
 }
 
@@ -69,6 +70,25 @@ function drawYAxis() {
 }
 
 /**
+ * draw vertical lines
+ */
+function drawVerticalLines() {
+    svg.append('g')
+        .selectAll('line')
+        .data(xScale.ticks())
+        .join('line')
+        .attr('stroke', '#E4E4E4')
+        .attr('x1', function (d) {
+            return xScale(new Date(d)) + xOffset;
+        })
+        .attr('x2', function (d) {
+            return xScale(new Date(d)) + xOffset;
+        })
+        .attr('y1', margin.top)
+        .attr('y2', height - margin.bottom);
+}
+
+/**
  * draw 
  * @param {*} data 
  */
@@ -80,6 +100,8 @@ function draw(data) {
     drawXAxis();
     // draw y-axis
     drawYAxis();
+    // draw vertical lines
+    drawVerticalLines();
 }
 
 // get data
