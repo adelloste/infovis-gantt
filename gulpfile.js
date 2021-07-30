@@ -82,14 +82,19 @@ function html() {
 }
 
 function images() {
-  return src('app/images/**/*', { since: lastRun(images) })
+  return src('app/assets/images/**/*', { since: lastRun(images) })
     .pipe($.imagemin())
-    .pipe(dest('dist/images'));
+    .pipe(dest('dist/assets/images'));
 };
 
 function fonts() {
-  return src('app/fonts/**/*.{eot,svg,ttf,woff,woff2}')
-    .pipe($.if(!isProd, dest('.tmp/fonts'), dest('dist/fonts')));
+  return src('app/assets/fonts/**/*.{eot,svg,ttf,woff,woff2}')
+    .pipe($.if(!isProd, dest('.tmp/assets/fonts'), dest('dist/assets/fonts')));
+};
+
+function stubs() {
+  return src('app/assets/stubs/**/*')
+    .pipe($.if(!isProd, dest('.tmp/assets/stubs'), dest('dist/assets/stubs')));
 };
 
 function extras() {
@@ -117,6 +122,7 @@ const build = series(
     series(parallel(styles, scripts), html),
     images,
     fonts,
+    stubs,
     extras
   ),
   measureSize
@@ -136,13 +142,15 @@ function startAppServer() {
 
   watch([
     'app/*.html',
-    'app/images/**/*',
-    '.tmp/fonts/**/*'
+    'app/assets/images/**/*',
+    '.tmp/assets/fonts/**/*',
+    '.tmp/assets/stubs/**/*',
   ]).on('change', server.reload);
 
   watch('app/styles/**/*.scss', styles);
   watch('app/scripts/**/*.js', scripts);
-  watch('app/fonts/**/*', fonts);
+  watch('app/assets/fonts/**/*', fonts);
+  watch('app/assets/stubs/**/*', stubs);
 }
 
 function startTestServer() {
@@ -179,7 +187,7 @@ function startDistServer() {
 
 let serve;
 if (isDev) {
-  serve = series(clean, parallel(styles, scripts, fonts), startAppServer);
+  serve = series(clean, parallel(styles, scripts, fonts, stubs), startAppServer);
 } else if (isTest) {
   serve = series(clean, scripts, startTestServer);
 } else if (isProd) {
