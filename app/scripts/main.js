@@ -43,6 +43,17 @@ function updateYScaleDomain(data) {
     yScale.domain(data.map(d => d.name));
 }
 
+function drawXAxis() {
+    // add scales to axis
+    var x_axis = d3.axisTop().scale(xScale);
+    // append group and insert y-axis
+    svg.append('g')
+        .transition()
+        .duration(500)
+        .attr('transform', 'translate(' + [10, margin.top] + ')')
+        .call(x_axis);
+}
+
 /**
  * draw y-axis
  */
@@ -65,6 +76,8 @@ function draw(data) {
     // update domain
     updateXScaleDomain();
     updateYScaleDomain(data);
+    // draw x-axis
+    drawXAxis();
     // draw y-axis
     drawYAxis();
 }
