@@ -15,7 +15,7 @@ var margin  = { top: 40, right: 30, bottom: 10, left: 40 },
     xOffset = 10;
 
 // scale for x-axis
-var xScale = d3.scaleUtc().range([margin.right, width - margin.left]);
+var xScale = d3.scaleTime().range([margin.right, width - margin.left]);
 
 // scale for y-axis
 var yScale = d3.scaleBand().range([margin.top, height - margin.bottom]);
