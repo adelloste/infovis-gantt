@@ -1,1 +1,51 @@
-{}
+[
+    {
+        "id": 1,
+        "name": "task1",
+        "initDate": "2020-01-15",
+        "endDate": "2020-01-17",
+        "color": "#696464"
+    },
+    {
+        "id": 2,
+        "name": "task1",
+        "initDate": "2020-01-26",
+        "endDate": "2020-01-30",
+        "color": "yellow"
+    },
+    {
+        "id": 3,
+        "name": "task2",
+        "initDate": "2020-01-20",
+        "endDate": "2020-01-25",
+        "color": "#a0c334"
+    },
+    {
+        "id": 4,
+        "name": "task3",
+        "initDate": "2020-01-10",
+        "endDate": "2020-01-22",
+        "color": "#ce2e6c"
+    },
+    {
+        "id": 5,
+        "name": "task4",
+        "initDate": "2020-01-23",
+        "endDate": "2020-02-03",
+        "color": "#1089ff"
+    },
+    {
+        "id": 6,
+        "name": "task5",
+        "initDate": "2020-01-13",
+        "endDate": "2020-02-10",
+        "color": "#723881"
+    },
+    {
+        "id": 7,
+        "name": "task6",
+        "initDate": "2020-03-13",
+        "endDate": "2020-05-05",
+        "color": "#d04925"
+    }
+]
