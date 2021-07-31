@@ -179,7 +179,7 @@ function draw(data) {
 }
 
 // get data
-d3.json('assets/stubs/data.json').then(
+d3.json('assets/stubs/reservations.json').then(
     function(data) {
         draw(data);
     }
