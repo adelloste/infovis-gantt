@@ -12,7 +12,9 @@
 var margin  = { top: 40, right: 30, bottom: 10, left: 40 },
     width   = 900,
     height  = 400,
-    xOffset = 10;
+    xOffset = 10,
+    deltaX  = null,
+    deltaY  = null;
 
 // scale for x-axis
 var xScale = d3.scaleTime().range([margin.right, width - margin.left]);
@@ -89,6 +91,32 @@ function drawVerticalLines() {
         .attr('y2', height - margin.bottom);
 }
 
+/**
+ * drag started
+ * @param {*} d 
+ */
+function dragStarted(d) {
+    var current = d3.select(this).raise().attr('stroke', 'black');
+    deltaX = current.attr('x') - event.x;
+}
+
+/**
+ * drag
+ * @param {*} d 
+ */
+function dragged(d) {
+    d3.select(this)
+        .attr('x', event.x + deltaX);
+}
+
+/**
+ * drag ended
+ * @param {*} d 
+ */
+function dragEnded(d) {
+    d3.select(this).attr('stroke', null);
+}
+
 function drawBars(data) {
     // calculate bar height
     var barHeight = yScale.bandwidth() / 2;
@@ -116,6 +144,12 @@ function drawBars(data) {
                             return end - init;
                         })
                 )
+        )
+        .call(
+            d3.drag()
+                .on('start', dragStarted)
+                .on('drag', dragged)
+                .on('end', dragEnded)
         );
 }
 
