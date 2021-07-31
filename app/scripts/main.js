@@ -36,7 +36,7 @@ var svg = d3.select('body')
  * @param {*} data 
  */
 function updateXScaleDomain(data) {
-    xScale.domain([d3.min(data, d => new Date(d.initDate)), d3.max(data, d => new Date(d.endDate))]);
+    xScale.domain([new Date('2021-01-01'), new Date('2021-01-31')]).clamp(true);
 }
 
 /**
@@ -49,13 +49,20 @@ function updateYScaleDomain(data) {
 
 function drawXAxis() {
     // add scales to axis
-    var x_axis = d3.axisTop().scale(xScale);
+    var x_axis = d3.axisTop()
+        .scale(xScale)
+        .ticks(d3.utcDay, 1)
+        .tickFormat(d3.timeFormat('%d/%m/%Y'))
+        .tickSize(12, 0, 0);
     // append group and insert y-axis
     svg.append('g')
         .transition()
         .duration(500)
         .attr('transform', 'translate(' + [xOffset, margin.top] + ')')
-        .call(x_axis);
+        .call(x_axis)
+        .selectAll('text')
+        .attr('transform', 'rotate(-45)')
+        .style('text-anchor', 'start');
 }
 
 /**
@@ -78,7 +85,7 @@ function drawYAxis() {
 function drawVerticalLines() {
     svg.append('g')
         .selectAll('line')
-        .data(xScale.ticks())
+        .data(xScale.ticks(d3.utcDay, 1))
         .join('line')
         .attr('stroke', '#E4E4E4')
         .attr('x1', function (d) {
@@ -132,7 +139,7 @@ function drawBars(data) {
                 .attr('x', function (d) {
                     const cooX = xScale(new Date(d.initDate))
                     return cooX + (1 * xOffset);
-                  })
+                })
                 .attr('y', d => (yScale(d.name) + barHeight / 2))
                 .call(
                     enter => enter
