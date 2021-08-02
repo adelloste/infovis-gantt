@@ -9,8 +9,8 @@
 }
 
 // init
-var margin  = { top: 40, right: 30, bottom: 10, left: 40 },
-    width   = 900,
+var margin  = { top: 50, right: 30, bottom: 10, left: 40 },
+    width   = 1024,
     height  = 400,
     xOffset = 10,
     deltaX  = null,
@@ -44,7 +44,7 @@ function updateXScaleDomain(data) {
  * @param {*} data 
  */
 function updateYScaleDomain(data) {
-    yScale.domain(data.map(d => d.name));
+    yScale.domain(data.map(d => d.room));
 }
 
 function drawXAxis() {
@@ -112,8 +112,12 @@ function dragStarted(d) {
  * @param {*} d 
  */
 function dragged(d) {
+    var init = xScale(new Date(d.subject.initDate));
+    var end = xScale(new Date(d.subject.endDate));
+    var wRect = end - init + margin.right;
+    // update position and limit area
     d3.select(this)
-        .attr('x', event.x + deltaX);
+        .attr('x', Math.max(margin.left, Math.min(width-wRect, event.x + deltaX)));
 }
 
 /**
@@ -140,7 +144,7 @@ function drawBars(data) {
                     const cooX = xScale(new Date(d.initDate))
                     return cooX + (1 * xOffset);
                 })
-                .attr('y', d => (yScale(d.name) + barHeight / 2))
+                .attr('y', d => (yScale(d.room) + barHeight / 2))
                 .call(
                     enter => enter
                         .transition()
