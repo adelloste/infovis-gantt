@@ -1,51 +1,58 @@
 [
     {
         "id": "8d648ad7-ac02-43c1-8ab8-9c2a42a28928",
-        "name": "task1",
+        "room": "room 1",
         "initDate": "2021-01-15",
         "endDate": "2021-01-17",
+        "name": "Rossi",
         "color": "#4682b4"
     },
     {
         "id": "4fae7087-3725-45e6-9484-ec740f0dd86f",
-        "name": "task1",
+        "room": "room 1",
         "initDate": "2021-01-26",
         "endDate": "2021-01-30",
+        "name": "Russo",
         "color": "#4682b4"
     },
     {
         "id": "2c95f6b6-0290-4881-89e5-a2571c8ca4b0",
-        "name": "task2",
+        "room": "room 2",
         "initDate": "2021-01-20",
         "endDate": "2021-01-25",
+        "name": "Ferrari",
         "color": "#4682b4"
     },
     {
         "id": "02d05b5f-09a4-4189-97a9-01121bb4e88b",
-        "name": "task3",
+        "room": "room 3",
         "initDate": "2021-01-10",
         "endDate": "2021-01-22",
+        "name": "Gallo",
         "color": "#4682b4"
     },
     {
         "id": "117cae90-0d6c-4895-9d16-da77c0668e1b",
-        "name": "task4",
+        "room": "room 4",
         "initDate": "2021-01-23",
         "endDate": "2021-02-03",
+        "name": "Conti",
         "color": "#4682b4"
     },
     {
         "id": "0cdbe9a0-6fa9-45a3-a6ba-f7ba7debcff8",
-        "name": "task5",
+        "room": "room 5",
         "initDate": "2021-01-13",
         "endDate": "2021-01-31",
+        "name": "Fontana",
         "color": "#4682b4"
     },
     {
         "id": "5be94c71-365e-40bf-86f6-41ece42133ee",
-        "name": "task6",
+        "room": "room 6",
         "initDate": "2021-01-01",
         "endDate": "2021-01-15",
+        "name": "Coppola",
         "color": "#4682b4"
     }
 ]
