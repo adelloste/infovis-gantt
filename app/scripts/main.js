@@ -33,6 +33,13 @@ var svg = d3.select('body')
     .attr('class', 'gantt-svg')
     .attr('transform', 'translate(' + margin.left + ',' + margin.top + ')');
 
+// create tooltip
+var tooltip = d3.select("body")
+    .append("div")
+    .attr("class", "svg-tooltip")
+    .style("position", "absolute")
+    .style("visibility", "hidden");
+
 /**
  * update xScale domain
  * @param {*} data 
@@ -54,7 +61,7 @@ function drawXAxis() {
     let x_axis = d3.axisTop()
         .scale(xScale)
         .ticks(d3.utcDay, 1)
-        .tickFormat(d3.timeFormat('%d/%m/%Y'))
+        .tickFormat(d3.timeFormat('%b %d'))
         .tickSize(12, 0, 0);
     // append group and insert y-axis
     svg.append('g')
@@ -121,6 +128,8 @@ function dragged(event, d) {
     // update position and limit area
     d3.select(this)
         .attr('x', Math.max(margin.left, Math.min(width-wRect, event.x + deltaX)));
+    // hidden tooltip
+    tooltip.style("visibility", "hidden");
 }
 
 /**
@@ -174,6 +183,18 @@ function drawBars(data) {
                     return cooX + (1 * xOffset);
                 })
                 .attr('y', d => (yScale(d.room) + barHeight / 2))
+                .on("mouseover", function () {
+                    return tooltip.style("visibility", "visible");
+                })
+                .on("mousemove", function (event, d) {
+                    return tooltip
+                        .html("Reservation for " + d.name)	
+                        .style("top", (event.pageY - 10) + "px")
+                        .style("left", (event.pageX + 10) + "px");
+                })
+                .on("mouseout", function () {
+                    return tooltip.style("visibility", "hidden");
+                })
                 .call(
                     enter => enter
                         .transition()
