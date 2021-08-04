@@ -1,20 +1,26 @@
 // generated on 2021-07-29 using generator-webapp 4.0.0-8
 const { src, dest, watch, series, parallel, lastRun } = require('gulp');
-const gulpLoadPlugins = require('gulp-load-plugins');
-const browserSync = require('browser-sync');
-const del = require('del');
-const autoprefixer = require('autoprefixer');
-const cssnano = require('cssnano');
-const { argv } = require('yargs');
+const ghPages                                         = require('gulp-gh-pages');
+const gulpLoadPlugins                                 = require('gulp-load-plugins');
+const browserSync                                     = require('browser-sync');
+const del                                             = require('del');
+const autoprefixer                                    = require('autoprefixer');
+const cssnano                                         = require('cssnano');
+const { argv }                                        = require('yargs');
+const replace                                         = require('gulp-replace');
+const log                                             = require('fancy-log');
 
-const $ = gulpLoadPlugins();
+const $      = gulpLoadPlugins();
 const server = browserSync.create();
 
 const port = argv.port || 9000;
 
-const isProd = process.env.NODE_ENV === 'production';
-const isTest = process.env.NODE_ENV === 'test';
-const isDev = !isProd && !isTest;
+const isDeploy = process.env.NODE_ENV === 'deploy';
+const isProd   = process.env.NODE_ENV === 'production' || process.env.NODE_ENV === 'deploy';
+const isTest   = process.env.NODE_ENV === 'test';
+const isDev    = !isProd && !isTest && !isDeploy;
+
+const baseHref = '/infovis-gantt/';
 
 function styles() {
   return src('app/styles/*.scss', {
@@ -47,7 +53,6 @@ function scripts() {
     .pipe(server.reload({stream: true}));
 };
 
-
 const lintBase = (files, options) => {
   return src(files)
     .pipe($.eslint(options))
@@ -55,10 +60,12 @@ const lintBase = (files, options) => {
     .pipe($.eslint.format())
     .pipe($.if(!server.active, $.eslint.failAfterError()));
 }
+
 function lint() {
   return lintBase('app/scripts/**/*.js', { fix: true })
     .pipe(dest('app/scripts'));
 };
+
 function lintTest() {
   return lintBase('test/spec/**/*.js');
 };
@@ -94,7 +101,7 @@ function fonts() {
 
 function stubs() {
   return src('app/assets/stubs/**/*')
-    .pipe($.if(!isProd, dest('.tmp/assets/stubs'), dest('dist/assets/stubs')));
+  .pipe($.if(!isProd, dest('.tmp/assets/stubs'), dest('dist/assets/stubs')));
 };
 
 function extras() {
@@ -126,6 +133,25 @@ const build = series(
     extras
   ),
   measureSize
+);
+
+function injectBaseHref() {
+  return src('dist/index.html')
+    .pipe(replace('<base href="/">', function handleReplace(match) {
+      return '<base href="' + baseHref + '">'
+    }))
+    .pipe(dest('dist/'));
+}
+
+function deploy() {
+  return src('dist/**/*')
+    .pipe(ghPages());
+}
+
+const release = series(
+  build,
+  injectBaseHref,
+  deploy
 );
 
 function startAppServer() {
@@ -194,6 +220,7 @@ if (isDev) {
   serve = series(build, startDistServer);
 }
 
-exports.serve = serve;
-exports.build = build;
+exports.serve   = serve;
+exports.build   = build;
 exports.default = build;
+exports.release = release;
