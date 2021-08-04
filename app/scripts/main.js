@@ -14,7 +14,9 @@ var margin  = { top: 50, right: 30, bottom: 10, left: 40 },
     height  = 400,
     xOffset = 10,
     deltaX  = null,
-    deltaY  = null;
+    deltaY  = null,
+    dragX   = null,
+    dragY   = null;
 
 // scale for x-axis
 var xScale = d3.scaleTime().range([margin.right, width - margin.left]);
@@ -49,7 +51,7 @@ function updateYScaleDomain(data) {
 
 function drawXAxis() {
     // add scales to axis
-    var x_axis = d3.axisTop()
+    let x_axis = d3.axisTop()
         .scale(xScale)
         .ticks(d3.utcDay, 1)
         .tickFormat(d3.timeFormat('%d/%m/%Y'))
@@ -70,7 +72,7 @@ function drawXAxis() {
  */
 function drawYAxis() {
     // add scales to axis
-    var y_axis = d3.axisLeft().scale(yScale);
+    let y_axis = d3.axisLeft().scale(yScale);
     // append group and insert y-axis
     svg.append('g')
         .transition()
@@ -102,19 +104,20 @@ function drawVerticalLines() {
  * drag started
  * @param {*} d 
  */
-function dragStarted(d) {
-    var current = d3.select(this).raise().attr('stroke', 'black');
+function dragStarted(event) {
+    let current = d3.select(this).raise().attr('stroke', 'black');
     deltaX = current.attr('x') - event.x;
+    dragX = d3.select(this).attr('x');
 }
 
 /**
  * drag
  * @param {*} d 
  */
-function dragged(d) {
-    var init = xScale(new Date(d.subject.initDate));
-    var end = xScale(new Date(d.subject.endDate));
-    var wRect = end - init + margin.right;
+function dragged(event, d) {
+    let init = xScale(new Date(d.initDate));
+    let end = xScale(new Date(d.endDate));
+    let wRect = end - init + margin.right;
     // update position and limit area
     d3.select(this)
         .attr('x', Math.max(margin.left, Math.min(width-wRect, event.x + deltaX)));
@@ -124,19 +127,45 @@ function dragged(d) {
  * drag ended
  * @param {*} d 
  */
-function dragEnded(d) {
+function dragEnded(o, i) {
+    // get attributes from moved reservation
+    let flag = false,
+        xMoved = parseFloat(d3.select(this).attr('x')),
+        wMoved = parseFloat(d3.select(this).attr('width')),
+        xFinalMoved = xMoved + wMoved;
+    // check overlapping
+    svg.selectAll('.rect').each(function(d) {
+        // check reservation for same room with different id
+        if(!flag && d.id !== i.id && d.room === i.room) {
+            // get attributes from other reservations
+            let x = parseFloat(d3.select(this).attr('x')),
+                w = parseFloat(d3.select(this).attr('width')),
+                xFinal = x + w;
+            // verify overlapping
+            if((xMoved > x && xMoved < xFinal) || (xFinalMoved > x && xFinalMoved < xFinal) || (xMoved < x && xFinalMoved > xFinal)) {
+                flag = true;
+            }
+        }
+    });
     d3.select(this).attr('stroke', null);
+    // reset old position
+    if(flag) {
+        d3.select(this).attr('x', dragX);
+        // reset flag
+        flag = false;
+    }
 }
 
 function drawBars(data) {
     // calculate bar height
-    var barHeight = yScale.bandwidth() / 2;
+    let barHeight = yScale.bandwidth() / 2;
     // create rect
     svg.append('g')
         .selectAll('rect')
         .data(data)
         .join(
             enter => enter.append('rect')
+                .attr('class', 'rect')
                 .attr('fill', d => d.color)
                 .attr('width', 0)
                 .attr('height', barHeight)
@@ -153,7 +182,22 @@ function drawBars(data) {
                             const init = xScale(new Date(d.initDate));
                             const end = xScale(new Date(d.endDate));
                             return end - init;
+                        }),
+                    update => update
+                        .transition()
+                        .delay((d, i) => i * 60)
+                        .attr('width', function (d) {
+                            const init = xScale(new Date(d.initDate));
+                            const end = xScale(new Date(d.endDate));
+                            return end - init;
                         })
+                        .attr('height', barHeight)
+                        .attr('y', d => (xScale(d.name) + barHeight / 2)),
+                    exit => exit
+                        .transition()
+                        .delay((d, i) => i * 60)
+                        .attr('width', 0)
+                        .remove()
                 )
         )
         .call(
