@@ -34,11 +34,11 @@ var svg = d3.select('body')
     .attr('transform', 'translate(' + margin.left + ',' + margin.top + ')');
 
 // create tooltip
-var tooltip = d3.select("body")
-    .append("div")
-    .attr("class", "svg-tooltip")
-    .style("position", "absolute")
-    .style("visibility", "hidden");
+var tooltip = d3.select('body')
+    .append('div')
+    .attr('class', 'svg-tooltip')
+    .style('position', 'absolute')
+    .style('visibility', 'hidden');
 
 /**
  * update xScale domain
@@ -129,7 +129,7 @@ function dragged(event, d) {
     d3.select(this)
         .attr('x', Math.max(margin.left, Math.min(width-wRect, event.x + deltaX)));
     // hidden tooltip
-    tooltip.style("visibility", "hidden");
+    tooltip.style('visibility', 'hidden');
 }
 
 /**
@@ -183,17 +183,17 @@ function drawBars(data) {
                     return cooX + (1 * xOffset);
                 })
                 .attr('y', d => (yScale(d.room) + barHeight / 2))
-                .on("mouseover", function () {
-                    return tooltip.style("visibility", "visible");
+                .on('mouseover', function () {
+                    return tooltip.style('visibility', 'visible');
                 })
-                .on("mousemove", function (event, d) {
+                .on('mousemove', function (event, d) {
                     return tooltip
-                        .html("Reservation for " + d.name)	
-                        .style("top", (event.pageY - 10) + "px")
-                        .style("left", (event.pageX + 10) + "px");
+                        .html('Reservation for ' + d.name)	
+                        .style('top', (event.pageY - 10) + 'px')
+                        .style('left', (event.pageX + 10) + 'px');
                 })
-                .on("mouseout", function () {
-                    return tooltip.style("visibility", "hidden");
+                .on('mouseout', function () {
+                    return tooltip.style('visibility', 'hidden');
                 })
                 .call(
                     enter => enter
