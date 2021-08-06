@@ -9,14 +9,17 @@
 }
 
 // init
-var margin  = { top: 50, right: 30, bottom: 10, left: 40 },
-    width   = 1024,
-    height  = 400,
+var margin = { top: 0, right: 30, bottom: 50, left: 40 },
+    width = 1024,
+    height = 400,
     xOffset = 10,
-    deltaX  = null,
-    deltaY  = null,
-    dragX   = null,
-    dragY   = null;
+    deltaX = null,
+    deltaY = null,
+    dragX = null,
+    dragY = null;
+
+// random color
+var color = d3.scaleOrdinal(d3.schemeCategory10);
 
 // scale for x-axis
 var xScale = d3.scaleTime().range([margin.right, width - margin.left]);
@@ -58,7 +61,7 @@ function updateYScaleDomain(data) {
 
 function drawXAxis() {
     // add scales to axis
-    let x_axis = d3.axisTop()
+    let x_axis = d3.axisBottom()
         .scale(xScale)
         .ticks(d3.utcDay, 1)
         .tickFormat(d3.timeFormat('%b %d'))
@@ -67,10 +70,10 @@ function drawXAxis() {
     svg.append('g')
         .transition()
         .duration(500)
-        .attr('transform', 'translate(' + [xOffset, margin.top] + ')')
+        .attr('transform', 'translate(' + [xOffset, height - margin.bottom] + ')')
         .call(x_axis)
         .selectAll('text')
-        .attr('transform', 'rotate(-45)')
+        .attr('transform', 'rotate(45)')
         .style('text-anchor', 'start');
 }
 
@@ -115,6 +118,8 @@ function dragStarted(event) {
     let current = d3.select(this).raise().attr('stroke', 'black');
     deltaX = current.attr('x') - event.x;
     dragX = d3.select(this).attr('x');
+    deltaY = current.attr('y') - event.y;
+    dragY = d3.select(this).attr('y');
 }
 
 /**
@@ -125,11 +130,26 @@ function dragged(event, d) {
     let init = xScale(new Date(d.initDate));
     let end = xScale(new Date(d.endDate));
     let wRect = end - init + margin.right;
-    // update position and limit area
-    d3.select(this)
-        .attr('x', Math.max(margin.left, Math.min(width-wRect, event.x + deltaX)));
+    // calculate bar height
+    let barHeight = yScale.bandwidth();
+    //
+    var x = event.x,
+        y = event.y,
+        gridY = round(Math.max(0, Math.min(height - barHeight - margin.bottom, y)), barHeight);
+    //
+    d3.select(this).attr('y', gridY);
     // hidden tooltip
     tooltip.style('visibility', 'hidden');
+}
+
+/**
+ * enforcing ended
+ * @param {*} p 
+ * @param {*} n 
+ * @returns 
+ */
+function round(p, n) {
+    return p % n < n / 2 ? p - (p % n) : p + n - (p % n);
 }
 
 /**
@@ -140,26 +160,28 @@ function dragEnded(o, i) {
     // get attributes from moved reservation
     let flag = false,
         xMoved = parseFloat(d3.select(this).attr('x')),
+        yMoved = parseInt(d3.select(this).attr('y')),
         wMoved = parseFloat(d3.select(this).attr('width')),
         xFinalMoved = xMoved + wMoved;
     // check overlapping
-    svg.selectAll('.rect').each(function(d) {
+    svg.selectAll('.rect').each(function(d, event) {
+        // get attributes from other reservations
+        let x = parseFloat(d3.select(this).attr('x')),
+            y = parseInt(d3.select(this).attr('y')),
+            w = parseFloat(d3.select(this).attr('width')),
+            xFinal = x + w;
         // check reservation for same room with different id
-        if(!flag && d.id !== i.id && d.room === i.room) {
-            // get attributes from other reservations
-            let x = parseFloat(d3.select(this).attr('x')),
-                w = parseFloat(d3.select(this).attr('width')),
-                xFinal = x + w;
+        if (!flag && d.id !== i.id && yMoved === y) {
             // verify overlapping
-            if((xMoved > x && xMoved < xFinal) || (xFinalMoved > x && xFinalMoved < xFinal) || (xMoved < x && xFinalMoved > xFinal)) {
+            if((xMoved >= x && xMoved < xFinal) || (xFinalMoved > x && xFinalMoved <= xFinal) || (xMoved < x && xFinalMoved > xFinal)) {
                 flag = true;
             }
         }
     });
     d3.select(this).attr('stroke', null);
     // reset old position
-    if(flag) {
-        d3.select(this).attr('x', dragX);
+    if (flag) {
+        d3.select(this).attr('y', dragY);
         // reset flag
         flag = false;
     }
@@ -167,7 +189,7 @@ function dragEnded(o, i) {
 
 function drawBars(data) {
     // calculate bar height
-    let barHeight = yScale.bandwidth() / 2;
+    let barHeight = yScale.bandwidth();
     // create rect
     svg.append('g')
         .selectAll('rect')
@@ -175,26 +197,26 @@ function drawBars(data) {
         .join(
             enter => enter.append('rect')
                 .attr('class', 'rect')
-                .attr('fill', d => d.color)
+                .attr('fill', (d, i) => color(i))
                 .attr('width', 0)
                 .attr('height', barHeight)
                 .attr('x', function (d) {
                     const cooX = xScale(new Date(d.initDate))
                     return cooX + (1 * xOffset);
                 })
-                .attr('y', d => (yScale(d.room) + barHeight / 2))
-                .on('mouseover', function () {
-                    return tooltip.style('visibility', 'visible');
-                })
-                .on('mousemove', function (event, d) {
-                    return tooltip
-                        .html('Reservation for ' + d.name)	
-                        .style('top', (event.pageY - 10) + 'px')
-                        .style('left', (event.pageX + 10) + 'px');
-                })
-                .on('mouseout', function () {
-                    return tooltip.style('visibility', 'hidden');
-                })
+                .attr('y', d => (yScale(d.room)))
+                // .on('mouseover', function () {
+                //     return tooltip.style('visibility', 'visible');
+                // })
+                // .on('mousemove', function (event, d) {
+                //     return tooltip
+                //         .html('Reservation for ' + d.name)
+                //         .style('top', (event.pageY - 10) + 'px')
+                //         .style('left', (event.pageX + 10) + 'px');
+                // })
+                // .on('mouseout', function () {
+                //     return tooltip.style('visibility', 'hidden');
+                // })
                 .call(
                     enter => enter
                         .transition()
@@ -213,7 +235,7 @@ function drawBars(data) {
                             return end - init;
                         })
                         .attr('height', barHeight)
-                        .attr('y', d => (xScale(d.name) + barHeight / 2)),
+                        .attr('y', d => (xScale(d.room) + barHeight / 2)),
                     exit => exit
                         .transition()
                         .delay((d, i) => i * 60)
@@ -249,7 +271,7 @@ function draw(data) {
 
 // get data
 d3.json('assets/stubs/reservations.json').then(
-    function(data) {
+    function (data) {
         draw(data);
     }
 );

@@ -4,6 +4,10 @@ html {
   	body {
     	min-height: 100%;
 
+		.gantt-svg {
+			margin-top: 2em;
+		}
+
     	.svg-tooltip {
 			background: rgba(69,77,93,.9);
 			border-radius: .1rem;

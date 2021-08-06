@@ -10,7 +10,7 @@
     {
         "id": "4fae7087-3725-45e6-9484-ec740f0dd86f",
         "room": "room 1",
-        "initDate": "2021-01-26",
+        "initDate": "2021-01-25",
         "endDate": "2021-01-30",
         "name": "Russo",
         "color": "#4682b4"
@@ -53,6 +53,30 @@
         "initDate": "2021-01-01",
         "endDate": "2021-01-15",
         "name": "Coppola",
+        "color": "#4682b4"
+    },
+    {
+        "id": "b6a57fb2-c7cf-4631-a660-98c5eb89173c",
+        "room": "room 7",
+        "initDate": "2021-01-20",
+        "endDate": "2021-01-25",
+        "name": "Ponzo",
+        "color": "#4682b4"
+    },
+    {
+        "id": "160b945b-95c2-45cb-a869-df8cb3e9cc05",
+        "room": "room 8",
+        "initDate": "2021-01-10",
+        "endDate": "2021-01-22",
+        "name": "Bianchi",
+        "color": "#4682b4"
+    },
+    {
+        "id": "9bd85026-e443-4946-b76b-4709ffaa1dab",
+        "room": "room 9",
+        "initDate": "2021-01-23",
+        "endDate": "2021-02-03",
+        "name": "Conte",
         "color": "#4682b4"
     }
 ]
