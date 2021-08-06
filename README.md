@@ -9,6 +9,7 @@ Final project - INFOVIS
 * [Install npm packages](#install-npm-packages)
 * [Npm scripts](#npm-scripts)
 * [Goal](#goal)
+* [Demo](#demo)
 
 ### Getting Started
 
@@ -46,5 +47,11 @@ npm install
 ### Goal
 
 Questo progetto consiste nel creare un programma per visualizzare delle time-series corrispondenti a prenotazioni alberghiere. L'idea è quella di gestire tramite un'interfaccia grafica una serie di slot temporali non sovrapposti attribuiti ad un numero finito di risorse (camere d'albergo). L'interfaccia potrebbe avere funzionalità di editing, per consentire di giocare con le prenotazioni per trovare soluzioni più efficienti (limitare cioè gli sfridi: le giornate in cui le camere non sono occupate da nessun cliente. Un esempio di visualizzazione di questo genere sono i diagrammi chiamati GANTT.
+
+**[⬆ back to top](#table-of-contents)**
+
+### Demo
+
+Published site at https://adelloste.github.io/infovis-gantt/
 
 **[⬆ back to top](#table-of-contents)**
