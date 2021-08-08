@@ -10,16 +10,79 @@
     <link rel="apple-touch-icon" href="apple-touch-icon.png">
     <!-- Place favicon.ico in the root directory -->
     <!-- build:css styles/vendor.css -->
-    <link rel="stylesheet" href="/node_modules/bootstrap/dist/css/bootstrap.min.css" type="text/css" />
+    <link rel="stylesheet" href="/node_modules/bootstrap/dist/css/bootstrap.min.css" type="text/css"/>
+    <link rel="stylesheet" href="/node_modules/bootstrap-datepicker/dist/css/bootstrap-datepicker.min.css" type="text/css"/>
+    <link rel="stylesheet" href="/node_modules/bootstrap-datepicker/dist/css/bootstrap-datepicker.standalone.min.css" type="text/css"/>
     <!-- endbuild -->
     <!-- build:css styles/main.css -->
     <link rel="stylesheet" href="styles/main.css">
     <!-- endbuild -->
   </head>
   <body>
+    <div class="container-fluid my-4">
+      <div class="row">
+        <div class="col-12">
+          <form id="reservation-form" autocomplete="off">
+            <div class="form-row align-items-end">
+              <div class="col-md-3">
+                <label for="range-date">Room</label>
+                <div class="input-group mb-3">
+                  <select class="custom-select" id="room">
+                    <option value="room 1">Room 1</option>
+                    <option value="room 2">Room 2</option>
+                    <option value="room 3">Room 3</option>
+                    <option value="room 4">Room 4</option>
+                    <option value="room 5">Room 5</option>
+                    <option value="room 6">Room 6</option>
+                    <option value="room 7">Room 7</option>
+                    <option value="room 8">Room 8</option>
+                    <option value="room 9">Room 9</option>
+                  </select>
+                </div>
+              </div>
+              <div class="col-md-3">
+                <label for="range-date">Date range</label>
+                <div class="input-group mb-3 input-daterange" id="datepicker">
+                  <input type="text" class="form-control" id="start-date" name="start">
+                  <div class="input-group-append">
+                    <span class="input-group-text" id="addon">to</span>
+                  </div>
+                  <input type="text" class="form-control" id="end-date" end="end">
+                </div>
+              </div>
+              <div class="col-md-3">
+                <button type="submit" class="btn btn-primary mb-3">Create reservation</button>
+              </div>
+            </div>
+          </form>
+        </div>
+      </div>
+    </div>
+    <div class="modal fade" id="error-modal" tabindex="-1" role="dialog" aria-labelledby="error-modal" aria-hidden="true">
+      <div class="modal-dialog" role="document">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h5 class="modal-title" id="error-modal">Attention</h5>
+            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+              <span aria-hidden="true">&times;</span>
+            </button>
+          </div>
+          <div class="modal-body">
+            <p>
+              Check availability
+            </p>
+          </div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+          </div>
+        </div>
+      </div>
+    </div>
     <!-- build:js scripts/vendor.js -->
     <script type="text/javascript" src="/node_modules/d3/dist/d3.min.js"></script>
     <script type="text/javascript" src="/node_modules/jquery/dist/jquery.min.js"></script>
+    <script type="text/javascript" src="/node_modules/jquery-validation/dist/jquery.validate.min.js"></script>
+    <script type="text/javascript" src="/node_modules/bootstrap-datepicker/dist/js/bootstrap-datepicker.min.js"></script>
     <script type="text/javascript" src="/node_modules/bootstrap/dist/js/bootstrap.min.js"></script>
     <!-- endbuild -->
     <!-- build:js scripts/main.js -->

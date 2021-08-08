@@ -9,17 +9,18 @@
 }
 
 // init
-var margin = { top: 0, right: 30, bottom: 50, left: 40 },
-    width = 1024,
-    height = 400,
-    xOffset = 10,
-    deltaX = null,
-    deltaY = null,
-    dragX = null,
-    dragY = null;
+var margin    = { top: 0, right: 30, bottom: 50, left: 40 },
+    width     = 1024,
+    height    = 400,
+    xOffset   = 10,
+    deltaX    = null,
+    deltaY    = null,
+    dragX     = null,
+    dragY     = null,
+    dataCases = null;
 
 // random color
-var color = d3.scaleOrdinal(d3.schemeCategory10);
+var color = d3.scaleOrdinal(d3.interpolateSpectral());
 
 // scale for x-axis
 var xScale = d3.scaleTime().range([margin.right, width - margin.left]);
@@ -57,6 +58,21 @@ function updateXScaleDomain(data) {
  */
 function updateYScaleDomain(data) {
     yScale.domain(data.map(d => d.room));
+}
+
+/**
+ * https://stackoverflow.com/a/50846323
+ * @param {*} scale 
+ * @returns 
+ */
+function scaleBandInvert(scale) {
+    var domain = scale.domain();
+    var paddingOuter = scale(domain[0]);
+    var eachBand = scale.step();
+    return function (value) {
+        var index = Math.floor(((value - paddingOuter) / eachBand));
+        return domain[Math.max(0, Math.min(index, domain.length - 1))];
+    }
 }
 
 function drawXAxis() {
@@ -185,14 +201,24 @@ function dragEnded(o, i) {
         // reset flag
         flag = false;
     }
+    else {
+        // get moved room
+        var room = scaleBandInvert(yScale)(o.y);
+        // update datacases
+        dataCases = d3.map(dataCases, function (d) {
+            return {
+                ...d,
+                ...(d.id === i.id && { room: room })
+            };
+        });
+    }
 }
 
 function drawBars(data) {
     // calculate bar height
     let barHeight = yScale.bandwidth();
     // create rect
-    svg.append('g')
-        .selectAll('rect')
+    svg.selectAll('rect')
         .data(data)
         .join(
             enter => enter.append('rect')
@@ -226,21 +252,21 @@ function drawBars(data) {
                             const end = xScale(new Date(d.endDate));
                             return end - init;
                         }),
-                    update => update
-                        .transition()
-                        .delay((d, i) => i * 60)
-                        .attr('width', function (d) {
-                            const init = xScale(new Date(d.initDate));
-                            const end = xScale(new Date(d.endDate));
-                            return end - init;
-                        })
-                        .attr('height', barHeight)
-                        .attr('y', d => (xScale(d.room) + barHeight / 2)),
-                    exit => exit
-                        .transition()
-                        .delay((d, i) => i * 60)
-                        .attr('width', 0)
-                        .remove()
+                        update => update
+                            .transition()
+                            .delay((d, i) => i * 60)
+                            .attr('width', function (d) {
+                                const init = xScale(new Date(d.initDate));
+                                const end = xScale(new Date(d.endDate));
+                                return end - init;
+                            })
+                            .attr('height', barHeight)
+                            .attr('y', d => (xScale(d.room) + barHeight / 2)),
+                        exit => exit
+                            .transition()
+                            .delay((d, i) => i * 60)
+                            .attr('width', 0)
+                            .remove()
                 )
         )
         .call(
@@ -272,6 +298,57 @@ function draw(data) {
 // get data
 d3.json('assets/stubs/reservations.json').then(
     function (data) {
+        dataCases = data;
+        // start
         draw(data);
     }
 );
+
+// init
+$('.input-daterange').datepicker({
+    format: 'yyyy-mm-dd',
+    startDate: '2021-01-01',
+    endDate: '2021-01-31',
+    autoclose: true
+});
+
+// Selezione form e definizione dei metodi di validazione
+$('#reservation-form').validate({
+    rules : {
+        start: {
+            required : true
+        },
+        end: {
+            required : true
+        },
+        room: {
+            required : true
+        }
+    },
+    messages: {
+        start: '',
+        end: '',
+        room: ''
+    },
+    submitHandler: function(form) {
+        // get value
+        var room  = $('#room').val();
+        var start = $('#start-date').val();
+        var end   = $('#end-date').val();
+        // update data-cases
+        if(dataCases.find((o) => o.room === room && o.initDate >= start && o.initDate < end)) {
+            console.log('ERROREEEE');
+        }
+        else {
+            dataCases.push({
+                'id': uuidv4(),
+                'room': room,
+                'initDate': start,
+                'endDate': end,
+                'name': 'XXXXXXXXX'
+            });
+            // update bars
+            drawBars(dataCases);
+        }
+    }
+});

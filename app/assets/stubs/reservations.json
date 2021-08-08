@@ -4,79 +4,69 @@
         "room": "room 1",
         "initDate": "2021-01-15",
         "endDate": "2021-01-17",
-        "name": "Rossi",
-        "color": "#4682b4"
+        "name": "Rossi"
     },
     {
         "id": "4fae7087-3725-45e6-9484-ec740f0dd86f",
         "room": "room 1",
         "initDate": "2021-01-25",
         "endDate": "2021-01-30",
-        "name": "Russo",
-        "color": "#4682b4"
+        "name": "Russo"
     },
     {
         "id": "2c95f6b6-0290-4881-89e5-a2571c8ca4b0",
         "room": "room 2",
         "initDate": "2021-01-20",
         "endDate": "2021-01-25",
-        "name": "Ferrari",
-        "color": "#4682b4"
+        "name": "Ferrari"
     },
     {
         "id": "02d05b5f-09a4-4189-97a9-01121bb4e88b",
         "room": "room 3",
         "initDate": "2021-01-10",
         "endDate": "2021-01-22",
-        "name": "Gallo",
-        "color": "#4682b4"
+        "name": "Gallo"
     },
     {
         "id": "117cae90-0d6c-4895-9d16-da77c0668e1b",
         "room": "room 4",
         "initDate": "2021-01-23",
         "endDate": "2021-02-03",
-        "name": "Conti",
-        "color": "#4682b4"
+        "name": "Conti"
     },
     {
         "id": "0cdbe9a0-6fa9-45a3-a6ba-f7ba7debcff8",
         "room": "room 5",
         "initDate": "2021-01-13",
         "endDate": "2021-01-31",
-        "name": "Fontana",
-        "color": "#4682b4"
+        "name": "Fontana"
     },
     {
         "id": "5be94c71-365e-40bf-86f6-41ece42133ee",
         "room": "room 6",
         "initDate": "2021-01-01",
         "endDate": "2021-01-15",
-        "name": "Coppola",
-        "color": "#4682b4"
+        "name": "Coppola"
     },
     {
         "id": "b6a57fb2-c7cf-4631-a660-98c5eb89173c",
         "room": "room 7",
         "initDate": "2021-01-20",
         "endDate": "2021-01-25",
-        "name": "Ponzo",
-        "color": "#4682b4"
+        "name": "Ponzo"
     },
     {
         "id": "160b945b-95c2-45cb-a869-df8cb3e9cc05",
         "room": "room 8",
         "initDate": "2021-01-10",
         "endDate": "2021-01-22",
-        "name": "Bianchi",
-        "color": "#4682b4"
+        "name": "Bianchi"
     },
     {
         "id": "9bd85026-e443-4946-b76b-4709ffaa1dab",
         "room": "room 9",
         "initDate": "2021-01-23",
         "endDate": "2021-02-03",
-        "name": "Conte",
-        "color": "#4682b4"
+        "name": "Conte"
     }
 ]
