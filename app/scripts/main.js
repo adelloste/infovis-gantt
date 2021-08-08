@@ -337,7 +337,7 @@ $('#reservation-form').validate({
         var end   = $('#end-date').val();
         // update data-cases
         if(dataCases.find((o) => o.room === room && o.initDate >= start && o.initDate < end)) {
-            console.log('ERROREEEE');
+            $('#error-modal').modal();
         }
         else {
             dataCases.push({
