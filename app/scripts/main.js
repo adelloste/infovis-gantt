@@ -20,7 +20,7 @@ var margin    = { top: 0, right: 30, bottom: 50, left: 40 },
     dataCases = null;
 
 // random color
-var color = d3.scaleOrdinal(d3.interpolateSpectral());
+var color = d3.scaleOrdinal(d3.schemeCategory10);
 
 // scale for x-axis
 var xScale = d3.scaleTime().range([margin.right, width - margin.left]);
