@@ -194,7 +194,7 @@ function dragEnded(o, i) {
             }
         }
     });
-    d3.select(this).attr('stroke', null);
+    d3.select(this).attr('stroke', '#FFFFFF');
     // reset old position
     if (flag) {
         d3.select(this).attr('y', dragY);
@@ -226,6 +226,7 @@ function drawBars(data) {
                 .attr('fill', (d, i) => color(i))
                 .attr('width', 0)
                 .attr('height', barHeight)
+                .attr('stroke', '#FFFFFF')
                 .attr('x', function (d) {
                     const cooX = xScale(new Date(d.initDate))
                     return cooX + (1 * xOffset);
