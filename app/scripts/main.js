@@ -131,7 +131,7 @@ function drawVerticalLines() {
  * @param {*} d 
  */
 function dragStarted(event) {
-    let current = d3.select(this).raise().attr('stroke', 'black');
+    let current = d3.select(this).raise().attr('stroke', 'white');
     deltaX = current.attr('x') - event.x;
     dragX = d3.select(this).attr('x');
     deltaY = current.attr('y') - event.y;
@@ -226,7 +226,7 @@ function drawBars(data) {
                 .attr('fill', (d, i) => color(i))
                 .attr('width', 0)
                 .attr('height', barHeight)
-                .attr('stroke', '#FFFFFF')
+                .attr('stroke', 'white')
                 .attr('x', function (d) {
                     const cooX = xScale(new Date(d.initDate))
                     return cooX + (1 * xOffset);
