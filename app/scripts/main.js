@@ -17,6 +17,7 @@ var margin    = { top: 0, right: 30, bottom: 50, left: 40 },
     deltaY    = null,
     dragX     = null,
     dragY     = null,
+    room      = null,
     dataCases = null;
 
 // random color
@@ -56,8 +57,8 @@ function updateXScaleDomain(data) {
  * update yScale domain
  * @param {*} data 
  */
-function updateYScaleDomain(data) {
-    yScale.domain(data.map(d => d.room));
+function updateYScaleDomain(rooms) {
+    yScale.domain(rooms.map(d => d.name));
 }
 
 /**
@@ -232,18 +233,6 @@ function drawBars(data) {
                     return cooX + (1 * xOffset);
                 })
                 .attr('y', d => (yScale(d.room)))
-                // .on('mouseover', function () {
-                //     return tooltip.style('visibility', 'visible');
-                // })
-                // .on('mousemove', function (event, d) {
-                //     return tooltip
-                //         .html('Reservation for ' + d.name)
-                //         .style('top', (event.pageY - 10) + 'px')
-                //         .style('left', (event.pageX + 10) + 'px');
-                // })
-                // .on('mouseout', function () {
-                //     return tooltip.style('visibility', 'hidden');
-                // })
                 .call(
                     enter => enter
                         .transition()
@@ -282,10 +271,10 @@ function drawBars(data) {
  * draw 
  * @param {*} data 
  */
-function draw(data) {
+function draw(room, dataCases) {
     // update domain
-    updateXScaleDomain(data);
-    updateYScaleDomain(data);
+    updateXScaleDomain(dataCases);
+    updateYScaleDomain(room);
     // draw x-axis
     drawXAxis();
     // draw y-axis
@@ -293,17 +282,20 @@ function draw(data) {
     // draw vertical lines
     drawVerticalLines();
     // draw bars
-    drawBars(data);
+    drawBars(dataCases);
 }
 
 // get data
-d3.json('assets/stubs/reservations.json').then(
-    function (data) {
-        dataCases = data;
-        // start
-        draw(data);
-    }
-);
+Promise.all([
+    d3.json('assets/stubs/rooms.json'),
+    d3.json('assets/stubs/reservations.json'),
+])
+.then(function(results) {
+    room = results[0];
+    dataCases = results[1];
+    // start
+    draw(room, dataCases);
+});
 
 // init
 $('.input-daterange').datepicker({
