@@ -34,7 +34,9 @@ var margin    = { top: 0, right: 30, bottom: 50, left: 40 },
     dataCases = null;
 
 // random color
-var color = d3.scaleOrdinal(d3.schemeCategory10);
+var color = d3.scaleSequential()
+	.domain([0, 20])
+	.interpolator(d3.interpolateRainbow);
 
 // scale for x-axis
 var xScale = d3.scaleTime().range([margin.right, width - margin.left]);
@@ -348,7 +350,7 @@ $('#reservation-form').validate({
         var start = $('#start-date').val();
         var end   = $('#end-date').val();
         // update data-cases
-        if(dataCases.find((o) => o.room === room && o.initDate >= start && o.initDate < end)) {
+        if(dataCases.find((o) => o.room === room && ((start >= o.initDate && start < o.endDate) || (end > o.initDate && end <= o.endDate) || (start < o.initDate && end > o.endDate)))) {
             $('#error-modal').modal();
         }
         else {
