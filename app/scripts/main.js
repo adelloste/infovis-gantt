@@ -369,7 +369,9 @@ $('#reservation-form').validate({
 function onChange(event) {
     var reader = new FileReader();
     reader.onload = onReaderLoad;
-    reader.readAsText(event.target.files[0]);
+    if(event.target.files[0]){
+        reader.readAsText(event.target.files[0]);
+    }
 }
 
 function onReaderLoad(event){
