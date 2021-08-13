@@ -1,0 +1,38 @@
+[
+    {
+        "id": "2cd4648d-b987-4803-b9de-8e88a2d5493d",
+        "name": "room 1"
+    },
+    {
+        "id": "eeec350d-d160-4490-8258-d83cbd828ee5",
+        "name": "room 2"
+    },
+    {
+        "id": "7181a124-9e2d-440b-9e04-253a8621e2da",
+        "name": "room 3"
+    },
+    {
+        "id": "2337a6d5-e20b-4b95-b59a-ad99b0666eab",
+        "name": "room 4"
+    },
+    {
+        "id": "c253ff04-4159-4857-8d2d-3dc2c1eae06b",
+        "name": "room 5"
+    },
+    {
+        "id": "4c208bb0-ba0c-4eac-98ae-82dd1857a677",
+        "name": "room 6"
+    },
+    {
+        "id": "af1ce5a7-dd10-4f83-aafb-700dc7de83db",
+        "name": "room 7"
+    },
+    {
+        "id": "ab261bad-185b-4fa3-908b-9d6b31d49a60",
+        "name": "room 8"
+    },
+    {
+        "id": "587ae678-0b40-44f7-90dd-1a6ece6e33ce",
+        "name": "room 9"
+    }
+]
