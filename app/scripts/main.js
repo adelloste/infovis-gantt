@@ -8,6 +8,19 @@
     return '00-0-4-1-000'.replace(/[^-]/g, s => (a[i++] + s * 0x10000 >> s).toString(16).padStart(4, '0'));
 }
 
+/**
+ * 
+ * @param {*} s 
+ * @returns 
+ */
+function encode(s) {
+    var out = [];
+    for (let i = 0; i < s.length; i++) {
+        out[i] = s.charCodeAt(i);
+    }
+    return new Uint8Array(out);
+}
+
 // init
 var margin    = { top: 0, right: 30, bottom: 50, left: 40 },
     width     = 1024,
@@ -30,7 +43,7 @@ var xScale = d3.scaleTime().range([margin.right, width - margin.left]);
 var yScale = d3.scaleBand().range([margin.top, height - margin.bottom]);
 
 // create svg
-var svg = d3.select('body')
+var svg = d3.select('.main-area')
     .append('svg')
     .attr('width', width)
     .attr('height', height)
@@ -39,7 +52,7 @@ var svg = d3.select('body')
     .attr('transform', 'translate(' + margin.left + ',' + margin.top + ')');
 
 // create tooltip
-var tooltip = d3.select('body')
+var tooltip = d3.select('.main-area')
     .append('div')
     .attr('class', 'svg-tooltip')
     .style('position', 'absolute')
@@ -220,7 +233,9 @@ function drawBars(data) {
     let barHeight = yScale.bandwidth();
     // create rect
     svg.selectAll('rect')
-        .data(data)
+        .data(data, function(d) {
+            return d.id;
+        })
         .join(
             enter => enter.append('rect')
                 .attr('class', 'rect')
@@ -241,23 +256,27 @@ function drawBars(data) {
                             const init = xScale(new Date(d.initDate));
                             const end = xScale(new Date(d.endDate));
                             return end - init;
-                        }),
-                        update => update
-                            .transition()
-                            .delay((d, i) => i * 60)
-                            .attr('width', function (d) {
-                                const init = xScale(new Date(d.initDate));
-                                const end = xScale(new Date(d.endDate));
-                                return end - init;
-                            })
-                            .attr('height', barHeight)
-                            .attr('y', d => (xScale(d.room) + barHeight / 2)),
-                        exit => exit
-                            .transition()
-                            .delay((d, i) => i * 60)
-                            .attr('width', 0)
-                            .remove()
-                )
+                        })
+                ),
+            update => update
+                .transition()
+                .delay((d, i) => i * 60)
+                .attr('x', function (d) {
+                    const cooX = xScale(new Date(d.initDate))
+                    return cooX + (1 * xOffset);
+                })
+                .attr('width', function (d) {
+                    const init = xScale(new Date(d.initDate));
+                    const end = xScale(new Date(d.endDate));
+                    return end - init;
+                })
+                .attr('height', barHeight)
+                .attr('y', d => yScale(d.room)),
+            exit => exit
+                .transition()
+                .delay((d, i) => i * 60)
+                .attr('width', 0)
+                .remove()
         )
         .call(
             d3.drag()
@@ -344,4 +363,38 @@ $('#reservation-form').validate({
             drawBars(dataCases);
         }
     }
+});
+
+
+function onChange(event) {
+    var reader = new FileReader();
+    reader.onload = onReaderLoad;
+    reader.readAsText(event.target.files[0]);
+}
+
+function onReaderLoad(event){
+    var obj = JSON.parse(event.target.result);
+    // filter rooms
+    dataCases = obj.filter((o) => room.find((el) => el.name === o.room));
+    // update bars
+    drawBars(dataCases);
+}
+
+document.getElementById('upload-file').addEventListener('change', onChange);
+
+var save = document.getElementById('save-drawing');
+save.addEventListener('click', function() {
+    var data = encode(JSON.stringify(dataCases, null, '\t'));
+
+    var blob = new Blob([data], {
+        type: 'application/octet-stream'
+    });
+    var url = URL.createObjectURL(blob);
+    var link = document.createElement('a');
+    link.setAttribute('href', url);
+    link.setAttribute('download', 'reservations.json');
+
+    var event = document.createEvent('MouseEvents');
+    event.initMouseEvent('click', true, true, window, 1, 0, 0, 0, 0, false, false, false, false, 0, null);
+    link.dispatchEvent(event);
 });
