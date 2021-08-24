@@ -77,18 +77,14 @@ function updateYScaleDomain(rooms) {
 }
 
 /**
- * https://stackoverflow.com/a/50846323
+ * https://stackoverflow.com/a/38746923
  * @param {*} scale 
  * @returns 
  */
-function scaleBandInvert(scale) {
-    var domain = scale.domain();
-    var paddingOuter = scale(domain[0]);
+function scaleBandInvert(scale, y) {
     var eachBand = scale.step();
-    return function (value) {
-        var index = Math.floor(((value - paddingOuter) / eachBand));
-        return domain[Math.max(0, Math.min(index, domain.length - 1))];
-    }
+    var index = Math.round((y / eachBand));
+    return scale.domain()[index];
 }
 
 function drawXAxis() {
@@ -219,7 +215,7 @@ function dragEnded(o, i) {
     }
     else {
         // get moved room
-        var room = scaleBandInvert(yScale)(o.y);
+        var room = scaleBandInvert(yScale, o.y);
         // update datacases
         dataCases = d3.map(dataCases, function (d) {
             return {
